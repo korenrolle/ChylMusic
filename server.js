@@ -15,6 +15,7 @@ const { PORT } = process.env;
 
 // express / app middleware
 app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
 // cors helper function
 app.use(cors()); // allows for cross origin request - open channel

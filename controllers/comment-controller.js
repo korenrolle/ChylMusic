@@ -1,11 +1,8 @@
 const express = require('express');
 const router = require('express').Router();
 
-const { Comment } = require('../models/');
-
-const db = require('../models');
-
-console.log(Comment);
+const { Comment } = require('../models/Comment');
+const { Post } = require('../models/Post');
 
 // Routes
 
@@ -19,7 +16,14 @@ router.get('/', async (req, res) => {
 });
 router.post('/', async (req, res) => {
   try {
-    const newComment = await Comment.create(req.body);
+    const postId = req.body.postId;
+    const post = await Post.findById(postId);
+    if (!post) {
+      return res.status(400).json({ error: 'Post not found' });
+    }
+    const newComment = await Comment.create({ ...req.body, post: postId });
+    post.comments.push(newComment._id);
+    await post.save();
     res.status(201).json(newComment);
   } catch (err) {
     // Validate the request
@@ -38,7 +42,7 @@ router.get('/:id', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
   try {
-    const deletedComment = await People.findByIdAndDelete(req.params.id);
+    const deletedComment = await Comment.findByIdAndDelete(req.params.id);
     res.status(200).json(deletedComment);
   } catch (err) {
     res.status(400).json({ error: err });
@@ -47,7 +51,7 @@ router.delete('/:id', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
   try {
-    const updatedComment = await People.findByIdAndUpdate(
+    const updatedComment = await Comment.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true }
