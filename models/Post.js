@@ -10,9 +10,6 @@ const postSchema = new mongoose.Schema({
   title: {
     type: String
   }
-  mp3: {
-    type: String
-  }
 });
 const Post = mongoose.model('Post', postSchema);
 
