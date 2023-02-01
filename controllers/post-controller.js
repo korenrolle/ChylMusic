@@ -1,6 +1,12 @@
 const express = require('express');
 const router = express.Router();
 
+const mongodb = require('mongodb');
+
+const { id } = mongodb.ObjectId;
+
+const URL = `http://localhost:4000/post/${id}`;
+
 // import model (Post)
 const { Post } = require('../models');
 
@@ -11,62 +17,64 @@ console.log(Post);
 
 // Routes
 // http://localhost:4000/post/
+///////////////////////////////
+// ROUTES
+////////////////////////////////
+
+// POST INDEX ROUTE
 router.get('/', async (req, res) => {
-  // res.status(200).json({message: "Post index/get route"})
   try {
-    const allPost = await Post.find({});
-    res.status(200).json(allPost);
-  } catch (err) {
-    res.status(400).json({ error: err });
+    // get all post
+    res.json(await Post.find({}));
+  } catch (error) {
+    //send error
+    res.status(400).json(error);
   }
 });
 
-// http://localhost:4000/post/
+// POST CREATE ROUTE
 router.post('/', async (req, res) => {
-  // console.log('post route', req.body)
-  // res.status(201).json({message: "Post create/post route"})
-
   try {
-    //
-    const newPost = await Post.create(req.body);
-    res.status(201).json(newPost);
-  } catch (err) {
-    res.status(400).json({ error: err });
+    // send all post
+    res.json(await Post.create(req.body));
+  } catch (error) {
+    //send error
+    res.status(400).json(error);
   }
 });
 
-// http://localhost:4000/Post/:id - GET
+// POST SHOW ROUTE
 router.get('/:id', async (req, res) => {
-  // res.status(200).json({message: "Post show/get route /Post/"+req.params.id})
   try {
-    const foundPost = await Post.findById(req.params.id);
-    res.status(200).json(foundPost);
-  } catch (err) {
-    res.status(400).json({ error: err });
-  }
-});
-// http://localhost:4000/Post/:id - DELETE
-router.delete('/:id', async (req, res) => {
-  // res.status(200).json({message: "Post destroy/delete route /Post/"+req.params.id})
-  try {
-    const deletedPost = await Post.findByIdAndDelete(req.params.id);
-    res.status(200).json(deletedPost);
-  } catch (err) {
-    // console.log(err)
-    res.status(400).json({ error: err });
+    // get post by ID
+    res.json(await Post.findById(req.params.id));
+  } catch (error) {
+    //send error
+    res.status(400).json(error);
   }
 });
 
-// http://localhost:4000/Post/:id - PUT
+// POST UPDATE ROUTE
 router.put('/:id', async (req, res) => {
-  // res.status(200).json({message: "Post update/put route /Post/"+req.params.id})
   try {
-    const updatedPost = await Post.findByIdAndUpdate(req.params.id, req.body, {
-      new: true
-    });
-    res.status(200).json(updatedPost);
-  } catch (err) {
-    res.status(400).json({ error: err });
+    // update post by ID
+    res.json(
+      await Post.findByIdAndUpdate(req.params.id, req.body, { new: true })
+    );
+  } catch (error) {
+    //send error
+    res.status(400).json(error);
+  }
+});
+
+// POST DELETE ROUTE
+router.delete('/:id', async (req, res) => {
+  try {
+    // delete post by ID
+    res.json(await Post.findByIdAndRemove(req.params.id));
+  } catch (error) {
+    //send error
+    res.status(400).json(error);
   }
 });
 

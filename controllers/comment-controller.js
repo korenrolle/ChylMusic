@@ -1,64 +1,77 @@
 const express = require('express');
-const router = require('express').Router();
+const router = express.Router();
 
-const { Comment } = require('../models/Comment');
-const { Post } = require('../models/Post');
+const mongodb = require('mongodb');
+const { id } = mongodb.ObjectId;
+
+// import model (Comment)
+const { Comment } = require('../models');
+
+const db = require('../models'); // db.Comment
+// const Comment = require('../models/Comment')
+
+console.log(Comment);
 
 // Routes
+// http://localhost:4000/comment/
+///////////////////////////////
+// ROUTES
+////////////////////////////////
 
+// COMMENT INDEX ROUTE
 router.get('/', async (req, res) => {
   try {
-    const allComments = await Comment.find({});
-    res.status(200).json(allComments);
+    // get all comment
+    res.json(await Comment.find({}));
   } catch (error) {
-    res.status(400).json({ error: err });
+    //send error
+    res.status(400).json(error);
   }
 });
+
+// COMMENT CREATE ROUTE
 router.post('/', async (req, res) => {
   try {
-    const postId = req.body.postId;
-    const post = await Post.findById(postId);
-    if (!post) {
-      return res.status(400).json({ error: 'Post not found' });
-    }
-    const newComment = await Comment.create({ ...req.body, post: postId });
-    post.comments.push(newComment._id);
-    await post.save();
-    res.status(201).json(newComment);
-  } catch (err) {
-    // Validate the request
-    res.status(400).json({ error: err });
+    // send all comment
+    res.json(await Comment.create(req.body));
+  } catch (error) {
+    //send error
+    res.status(400).json(error);
   }
 });
 
+// COMMENT SHOW ROUTE
 router.get('/:id', async (req, res) => {
   try {
-    const foundComment = await Comment.findById(req.params.id);
-    res.status(200).json(foundComment);
-  } catch (err) {
-    res.status(400).json({ error: err });
+    // get comment by ID
+    res.json(await Comment.findById(req.params.id));
+  } catch (error) {
+    //send error
+    res.status(400).json(error);
   }
 });
 
-router.delete('/:id', async (req, res) => {
-  try {
-    const deletedComment = await Comment.findByIdAndDelete(req.params.id);
-    res.status(200).json(deletedComment);
-  } catch (err) {
-    res.status(400).json({ error: err });
-  }
-});
-
+// COMMENT UPDATE ROUTE
 router.put('/:id', async (req, res) => {
   try {
-    const updatedComment = await Comment.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
+    // update comment by ID
+    res.json(
+      await Comment.findByIdAndUpdate(req.params.id, req.body, { new: true })
     );
-    res.status(200).json(updatedComment);
-  } catch (err) {
-    res.status(400).json({ error: err });
+  } catch (error) {
+    //send error
+    res.status(400).json(error);
+  }
+});
+
+// COMMENT DELETE ROUTE
+router.delete('/:id', async (req, res) => {
+  try {
+    // delete comment by ID
+    res.json(await Comment.findByIdAndRemove(req.params.id));
+  } catch (error) {
+    //send error
+    res.status(400).json(error);
   }
 });
 

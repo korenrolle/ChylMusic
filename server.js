@@ -5,11 +5,13 @@ const app = express();
 // app dependencies
 const cors = require('cors');
 const morgan = require('morgan');
+const dotenv = require('dotenv');
 
 // controller imports
 const postController = require('./controllers/post-controller');
 const commentController = require('./controllers/comment-controller');
-require('dotenv').config();
+
+dotenv.config();
 require('./config/db.connection'); // node runs all of the code in db.connection
 
 const { PORT } = process.env;
