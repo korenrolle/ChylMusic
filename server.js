@@ -11,7 +11,7 @@ const dotenv = require('dotenv');
 const postController = require('./controllers/post-controller');
 const commentController = require('./controllers/comment-controller');
 
-dotenv.config();
+require('dotenv').config();
 require('./config/db.connection'); // node runs all of the code in db.connection
 
 const { PORT } = process.env;
